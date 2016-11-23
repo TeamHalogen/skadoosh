@@ -87,6 +87,20 @@ separatestuff(){
     Rss=$?
 }
 
+
+# Optimize and compress git repositories
+# Does an aggressive garbage collection
+optimizestuff() {
+    cd $DIR/$ROMNAME/.repo/project-objects/
+    
+    while read filename; do
+        echo "Optimizing $filename..."
+        cd $filename
+        git gc --aggressive --force
+        cd $DIR/$ROMNAME/.repo/project-objects/
+    done < <(find ./ -name "*.git" -type d)
+}
+
 compressstuff(){
     cd $DIR/$ROMNAME/
     export XZ_OPT=-9e
@@ -195,6 +209,8 @@ doallstuff(){
          exit 1
          ;;
     esac
+    
+    optimizestuff
 
     # Separate the stuff
     separatestuff
